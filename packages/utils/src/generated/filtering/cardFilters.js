@@ -2928,6 +2928,8 @@ var grammar = {
     {"name": "isValue$subexpression$1", "symbols": ["isValue$subexpression$1$subexpression$63"]},
     {"name": "isValue$subexpression$1$subexpression$64", "symbols": [/[sS]/, /[iI]/, /[nN]/, /[gG]/, /[lL]/, /[eE]/, /[tT]/, /[oO]/, /[nN]/], "postprocess": function(d) {return d.join(""); }},
     {"name": "isValue$subexpression$1", "symbols": ["isValue$subexpression$1$subexpression$64"]},
+    {"name": "isValue$subexpression$1$subexpression$65", "symbols": [/[pP]/, /[iI]/, /[cC]/, /[kK]/, /[eE]/, /[dD]/], "postprocess": function(d) {return d.join(""); }},
+    {"name": "isValue$subexpression$1", "symbols": ["isValue$subexpression$1$subexpression$65"]},
     {"name": "isValue", "symbols": ["isValue$subexpression$1"], "postprocess": ([[category]]) => category.toLowerCase()},
     {"name": "powerWords$subexpression$1$subexpression$1", "symbols": [/[pP]/, /[oO]/, /[wW]/], "postprocess": function(d) {return d.join(""); }},
     {"name": "powerWords$subexpression$1", "symbols": ["powerWords$subexpression$1$subexpression$1"]},

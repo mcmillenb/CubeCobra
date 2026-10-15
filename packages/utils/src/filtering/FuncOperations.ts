@@ -155,6 +155,7 @@ export const CATEGORY_LABELS: Record<string, string> = {
   supplemental: 'a supplemental card',
   voucher: 'a voucher',
   singleton: 'a singleton in its board',
+  picked: 'picked in the rotisserie draft',
   // Land archetypes (is:fetchland, is:shockland, ...).
   bikeland: 'a cycling land',
   cycleland: 'a cycling land',

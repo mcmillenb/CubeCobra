@@ -442,3 +442,15 @@ Operators supported: `:`, `=`, `<`, `>`, `<=`, `>=`, `!=`, `<>`.
 | `copies<3`      | cards with one or two copies in the same board.                |
 | `is:singleton`  | cards that appear only once in the board.                      |
 | `not:singleton` | cards that appear multiple times in the board.                 |
+
+## Rotisserie Draft Picks
+
+**Filters for individual cubes:** when a rotisserie draft is set up on the cube list, `is:picked`
+matches mainboard cards that have already been drafted, and `not:picked` matches the cards still
+available. With no rotisserie draft configured, `is:picked` matches nothing.
+
+| Query                  | Matches                                     |
+| ---------------------- | ------------------------------------------- |
+| `is:picked`            | cards that have been picked in the draft.   |
+| `not:picked`           | cards that are still available to pick.     |
+| `not:picked t:instant` | instants that are still available to pick.  |

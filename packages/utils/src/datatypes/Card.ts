@@ -265,6 +265,9 @@ export default interface Card {
   // Number of copies of this card (by name) in the same board as this card.
   // Stamped in the client cube list before filtering; not persisted.
   quantity?: number;
+  // Whether this card has been picked in the configured rotisserie draft.
+  // Stamped in the client cube list before filtering; not persisted.
+  rotoPicked?: boolean;
   markedForDelete?: boolean;
   editIndex?: number;
   removeIndex?: number;

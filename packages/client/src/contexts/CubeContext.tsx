@@ -37,6 +37,7 @@ import ChangesContext from './ChangesContext';
 import { CSRFContext } from './CSRFContext';
 import DisplayContext from './DisplayContext';
 import FilterContext from './FilterContext';
+import RotoDraftContext from './RotoDraftContext';
 import UserContext from './UserContext';
 
 export interface CubeWithCards extends Cube {
@@ -224,6 +225,7 @@ export function CubeContextProvider({
   const user = useContext(UserContext);
   const { changes, setChanges, clearChanges, version, setVersion, setValidationCards } = useContext(ChangesContext);
   const { filterInput, cardFilter } = useContext(FilterContext)!;
+  const { url: rotoURL, rotoInfo } = useContext(RotoDraftContext);
 
   const { setOpenCollapse, activeView, useBaseCardData } = useContext(DisplayContext);
 
@@ -1068,7 +1070,7 @@ export function CubeContextProvider({
     [changes, setChanges],
   );
 
-  const [changedCards, unfilteredChangedCards] = useMemo(() => {
+  const unfilteredChangedCards = useMemo(() => {
     const changed = deepCopy(cube.cards);
 
     if (useChangedCards) {
@@ -1126,11 +1128,6 @@ export function CubeContextProvider({
       }
     }
 
-    const result: Record<string, Card[]> = {};
-    // When using base card data, apply the filter against base attributes
-    const effectiveFilter = useBaseCardData
-      ? (card: Card) => cardFilter.filter(cardWithBaseAttributes(card))
-      : cardFilter.filter;
     for (const board of Object.keys(changed)) {
       if (Array.isArray(changed[board])) {
         // Stamp per-board copy counts (grouped by name, matching Collapse Duplicates)
@@ -1143,12 +1140,34 @@ export function CubeContextProvider({
         for (const card of changed[board]) {
           card.quantity = countsByName.get(cardName(card)) ?? 1;
         }
-        result[board] = changed[board].filter(effectiveFilter);
       }
     }
 
-    return [result, changed];
-  }, [cube.cards, useChangedCards, cardFilter, changes, versionDict, useBaseCardData]);
+    return changed as Record<string, Card[]>;
+  }, [cube.cards, useChangedCards, changes, versionDict]);
+
+  // Kept separate from unfilteredChangedCards: the roto pick mapping is derived from the
+  // unfiltered cards, so folding it into that memo would recompute in a loop.
+  const changedCards = useMemo(() => {
+    // Roto picks are only mapped onto the mainboard. Stamp them so `is:picked` can key off it.
+    const pickedIndexes = new Set(rotoURL !== '' ? Object.values(rotoInfo.cardIndexMapping ?? {}) : []);
+    for (const card of unfilteredChangedCards.mainboard ?? []) {
+      card.rotoPicked = card.index !== undefined && pickedIndexes.has(card.index);
+    }
+
+    const result: Record<string, Card[]> = {};
+    // When using base card data, apply the filter against base attributes
+    const effectiveFilter = useBaseCardData
+      ? (card: Card) => cardFilter.filter(cardWithBaseAttributes(card))
+      : cardFilter.filter;
+    for (const board of Object.keys(unfilteredChangedCards)) {
+      if (Array.isArray(unfilteredChangedCards[board])) {
+        result[board] = unfilteredChangedCards[board].filter(effectiveFilter);
+      }
+    }
+
+    return result;
+  }, [unfilteredChangedCards, cardFilter, useBaseCardData, rotoURL, rotoInfo.cardIndexMapping]);
 
   // Update filter result when cards or filter changes
   useEffect(() => {

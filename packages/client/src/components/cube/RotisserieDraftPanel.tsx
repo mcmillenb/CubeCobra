@@ -19,17 +19,18 @@ import usePollGoogleSheet from 'hooks/usePollGoogleSheet';
 const CardModalLink = withCardModal(AutocardListItem);
 
 const RotisserieDraftPanel = () => {
-  const { changedCards } = React.useContext(CubeContext);
+  const { changedCards, unfilteredChangedCards } = React.useContext(CubeContext);
   usePollGoogleSheet();
   const { url, rotoInfo, assignCardIndexes } = React.useContext(RotoDraftContext);
   const [hidden, setHidden] = React.useState(true);
 
-  // Assign card indexes when roto info changes
+  // Assign card indexes when roto info changes. Use the unfiltered mainboard so an active
+  // filter can't shift which copy of a duplicate card each pick maps to.
   React.useEffect(() => {
     if (rotoInfo.picks && Object.keys(rotoInfo.picks).length > 0) {
-      assignCardIndexes(changedCards.mainboard);
+      assignCardIndexes(unfilteredChangedCards.mainboard);
     }
-  }, [rotoInfo.picks, changedCards.mainboard, assignCardIndexes]);
+  }, [rotoInfo.picks, unfilteredChangedCards.mainboard, assignCardIndexes]);
 
   if (url === '' || Object.keys(rotoInfo.picksByPlayer).length === 0 || Object.keys(rotoInfo.players).length === 0) {
     return null;

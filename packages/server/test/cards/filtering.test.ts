@@ -609,3 +609,24 @@ describe('Quantity filter syntax', () => {
     expect(notFilter!(trio)).toBe(true);
   });
 });
+
+describe('Rotisserie picked filter syntax', () => {
+  const unannotated = createCard({ details: createCardDetails({ name: 'Solo', name_lower: 'solo' }) });
+  const unpicked = { ...createCard(), rotoPicked: false };
+  const picked = { ...createCard(), rotoPicked: true };
+
+  it('is:picked matches only cards stamped as picked', () => {
+    const { err, filter } = makeFilter('is:picked');
+    expect(err).toBeFalsy();
+    expect(filter!(picked)).toBe(true);
+    expect(filter!(unpicked)).toBe(false);
+    expect(filter!(unannotated)).toBe(false);
+  });
+
+  it('not:picked matches cards that have not been picked', () => {
+    const { filter } = makeFilter('not:picked');
+    expect(filter!(picked)).toBe(false);
+    expect(filter!(unpicked)).toBe(true);
+    expect(filter!(unannotated)).toBe(true);
+  });
+});

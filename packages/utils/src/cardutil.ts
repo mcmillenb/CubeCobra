@@ -838,6 +838,7 @@ const RAW_CARD_CATEGORY_DETECTORS: Record<string, (details: CardDetailsType, car
   supplemental: (details) => details.printedInExpansion === false,
   voucher: (_details, card) => !!(card && isVoucher(card)),
   singleton: (_details, card) => !!card && cardQuantity(card) === 1,
+  picked: (_details, card) => !!card?.rotoPicked,
 
   // Others from Scryfall:
   //   reserved, new, old, hires,
